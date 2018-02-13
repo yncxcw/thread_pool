@@ -8,6 +8,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<algorithm>
+#include<fstream>
 #include"../thread_pool.h"
 std::random_device rd;  //Will be used to obtain a seed for the random number engine
 std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
@@ -94,7 +95,7 @@ double a=0;
 
 std::cout<<"start query"<<std::endl;
 //control the # of iterations
-for(int i=0; i<10 ;i++){
+for(int i=0; i<300;i++){
  //for each iteration, we submit 2000 queries
  std::vector<std::future<double>> results;
  for(int j=0; j<2000; j++){
@@ -112,6 +113,12 @@ pool.stop();
 delete store;
 std::cout<<"finish "<<std::endl;
 std::sort(runtimes.begin(),runtimes.end());
-std::cout<<"1st "<<runtimes[0]<<" nst "<<runtimes[runtimes.size()-1]<<std::endl;
+std::ofstream fout("latency",std::ofstream::out);
+int i=0;
+while(i<0.999*runtimes.size()){
+   fout<<runtimes[i]<<std::endl;
+   i++;
+}
+std::cout<<"1st "<<runtimes[(int)(runtimes.size()*0.5)]<<" nst "<<runtimes[(int)(runtimes.size()*0.95)]<<std::endl;
 return 0;
 }
